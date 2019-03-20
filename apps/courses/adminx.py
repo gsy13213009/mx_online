@@ -1,5 +1,5 @@
 import xadmin
-from .models import Course, Lesson, Video, CourseResource
+from .models import *
 
 
 class CourseAdmin(object):
