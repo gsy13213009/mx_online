@@ -35,7 +35,7 @@ class Lesson(models.Model):
 
 
 class Video(models.Model):
-    course = models.ForeignKey(Course, verbose_name='章节', on_delete=models.CASCADE)
+    lesson = models.ForeignKey(Lesson, verbose_name='章节', on_delete=models.CASCADE)
     name = models.CharField(max_length=100, verbose_name='视频名')
     add_time = models.DateTimeField(default=datetime.now)
 
