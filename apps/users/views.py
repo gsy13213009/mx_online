@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate, login as sys_login
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.hashers import make_password
 from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import View
 
@@ -58,6 +59,8 @@ class RegisterView(View):
         register_form = RegisterForm(request.POST)
         if register_form.is_valid():
             email = request.POST.get('email', '')
+            if UserProfile.objects.filter(email=email):
+                return render(request, 'login.html', {'msg': '用户已经存在'})
             password = request.POST.get('password', '')
             user_profile = UserProfile()
             user_profile.username = email
@@ -81,5 +84,7 @@ class ActiveUser(View):
                 user = UserProfile.objects.get(email=email)
                 user.is_active = True
                 user.save()
+        else:
+            return HttpResponse('链接已失效')
         return render(request, 'login.html')
 
