@@ -16,10 +16,11 @@ Including another URLconf
 from django.urls import path
 from django.views.generic import TemplateView
 import xadmin
-from users.views import LoginView
+from users.views import LoginView, RegisterView
 
 urlpatterns = [
     path('admin/', xadmin.site.urls),
     path('', TemplateView.as_view(template_name='index.html')),
-    path('login/', LoginView.as_view(), name='登录')
+    path('login/', LoginView.as_view(), name='登录'),
+    path('register/', RegisterView.as_view(), name='注册'),
 ]
