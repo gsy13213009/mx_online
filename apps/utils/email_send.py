@@ -14,12 +14,15 @@ def send_register_email(email, send_type='register'):
     email_record.send_type = send_type
     email_record.save()
 
-    email_title = ''
-    email_body = ''
-
     if send_type == 'register':
         email_title = '在线激活链接'
         email_body = '请点击链接激活：http://127.0.0.1:8000/active/' + random_str
+        send_status = send_mail(email_title, email_body, EMAIL_FROM, [email])
+        if send_status:
+            pass
+    elif send_type == 'forget':
+        email_title = '重置密码'
+        email_body = '点击下面链接重置密码：http://127.0.0.1:8000/reset/' + random_str
         send_status = send_mail(email_title, email_body, EMAIL_FROM, [email])
         if send_status:
             pass

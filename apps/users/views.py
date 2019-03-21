@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import View
 
-from users.forms import LoginForm, RegisterForm
+from users.forms import LoginForm, RegisterForm, ForgetForm, ModifyPwdForm
 from users.models import UserProfile, EmailVerifyRecord
 
 # 自定义auth登录操作
@@ -74,6 +74,7 @@ class RegisterView(View):
         else:
             return render(request, 'register.html', locals())
 
+
 class ActiveUser(View):
 
     def get(self, request, active_code):
@@ -88,3 +89,48 @@ class ActiveUser(View):
             return HttpResponse('链接已失效')
         return render(request, 'login.html')
 
+
+class ForgetView(View):
+
+    def get(self, request):
+        forget_form = ForgetForm()
+        return render(request, 'forgetpwd.html', locals())
+
+    def post(self, request):
+        forget_form = ForgetForm(request.POST)
+        if forget_form.is_valid():
+            email = request.POST.get('email')
+            send_register_email(email, 'forget')
+            return HttpResponse('邮件已经发送，请查收')
+        else:
+            return render(request, 'forgetpwd.html', locals())
+
+
+class ResetView(View):
+
+    def get(self, request, reset_code):
+        all_records = EmailVerifyRecord.objects.filter(code=reset_code)
+        if all_records:
+            for record in all_records:
+                email = record.email
+                return render(request, 'password_reset.html', locals())
+        else:
+            return HttpResponse('hhhhhhhhhh')
+
+class ModifyPwdView(View):
+    def post(self, request):
+        modify_form = ModifyPwdForm(request.POST)
+        if modify_form.is_valid():
+            pwd1 = request.POST.get('password1', '')
+            pwd2 = request.POST.get('password2', '')
+            email = request.POST.get('email', '')
+            if pwd1 != pwd2:
+                return render(request, 'password_reset.html', {'msg': '密码不一致'})
+            users = UserProfile.objects.filter(email=email)
+            for user in users:
+                if user:
+                    user.password = make_password(pwd1)
+                    user.save()
+            return render(request, 'login.html')
+        else:
+            return render(request, 'password_reset.html', locals())

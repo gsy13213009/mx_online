@@ -17,7 +17,7 @@ from django.conf.urls import url
 from django.urls import path, include
 from django.views.generic import TemplateView
 import xadmin
-from users.views import LoginView, RegisterView, ActiveUser
+from users.views import LoginView, RegisterView, ActiveUser, ForgetView, ResetView, ModifyPwdView
 
 urlpatterns = [
     path('admin/', xadmin.site.urls),
@@ -25,5 +25,9 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('register/', RegisterView.as_view(), name='register'),
     url(r'^captcha/', include('captcha.urls')),
-    url(r'^active/(?P<active_code>.*)/$', ActiveUser.as_view(), name='active')
+    url(r'^active/(?P<active_code>.*)/$', ActiveUser.as_view(), name='active'),
+    url(r'^forget/$', ForgetView.as_view(), name='forget_pwd'),
+    url(r'^reset/(?P<reset_code>.*)/$', ResetView.as_view()),
+    url(r'^reset/$', ModifyPwdView.as_view(), name='reset_pwd'),
+
 ]
