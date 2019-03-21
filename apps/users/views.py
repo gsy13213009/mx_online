@@ -1,14 +1,18 @@
 from django.contrib.auth import authenticate, login as sys_login
 from django.contrib.auth.backends import ModelBackend
+from django.contrib.auth.hashers import make_password
 from django.db.models import Q
 from django.shortcuts import render
 from django.views import View
 
-from users.forms import LoginForm
+from users.forms import LoginForm, RegisterForm
 from users.models import UserProfile
 
 
 # 自定义auth登录操作
+from utils.email_send import send_register_email
+
+
 class CustomBackend(ModelBackend):
 
     # 覆盖方法
@@ -42,6 +46,25 @@ class LoginView(View):
         else:
             return render(request, 'login.html', {'login_form': login_form})
 
+
 class RegisterView(View):
     def get(self, request):
-        return render(request, 'register.html')
+        register_form = RegisterForm()
+        return render(request, 'register.html', locals())
+
+    def post(self, request):
+        register_form = RegisterForm(request.POST)
+        if register_form.is_valid():
+            email = request.POST.get('email', '')
+            password = request.POST.get('password', '')
+            user_profile = UserProfile()
+            user_profile.username = email
+            user_profile.email = email
+            user_profile.password = make_password(password)
+            user_profile.save()
+
+            send_register_email(email, 'register')
+            return render(request, 'login.html')
+        else:
+            return render(request, 'register.html', locals())
+
