@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate, login as sys_login
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
 from django.shortcuts import render
+from django.views import View
 
 from users.models import UserProfile
 
@@ -19,10 +20,11 @@ class CustomBackend(ModelBackend):
         except Exception as e:
             return None
 
+class LoginView(View):
+    def get(self, request):
+        return render(request, 'login.html', {})
 
-# Create your views here.
-def login(request):
-    if request.method == 'POST':
+    def post(self, request):
         user_name = request.POST.get('username', '')
         pass_word = request.POST.get('password', '')
         # 如果用户验证成功，会返回用户对象，否则返回None
@@ -32,5 +34,3 @@ def login(request):
             return render(request, 'index.html', {})
         else:
             return render(request, 'login.html', {'msg': '用户名或者密码错误'})
-    elif request.method == 'GET':
-        return render(request, 'login.html', {})
