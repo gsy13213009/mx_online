@@ -17,12 +17,13 @@ from django.conf.urls import url
 from django.urls import path, include
 from django.views.generic import TemplateView
 import xadmin
-from users.views import LoginView, RegisterView
+from users.views import LoginView, RegisterView, ActiveUser
 
 urlpatterns = [
     path('admin/', xadmin.site.urls),
-    path('', TemplateView.as_view(template_name='index.html')),
+    path('', TemplateView.as_view(template_name='index.html'), name='index'),
     path('login/', LoginView.as_view(), name='login'),
     path('register/', RegisterView.as_view(), name='register'),
     url(r'^captcha/', include('captcha.urls')),
+    url(r'^active/(?P<active_code>.*)/$', ActiveUser.as_view(), name='active')
 ]

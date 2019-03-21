@@ -6,8 +6,7 @@ from django.shortcuts import render
 from django.views import View
 
 from users.forms import LoginForm, RegisterForm
-from users.models import UserProfile
-
+from users.models import UserProfile, EmailVerifyRecord
 
 # 自定义auth登录操作
 from utils.email_send import send_register_email
@@ -39,8 +38,11 @@ class LoginView(View):
             # 如果用户验证成功，会返回用户对象，否则返回None
             user = authenticate(request, username=user_name, password=pass_word)
             if user is not None:
-                sys_login(request, user)
-                return render(request, 'index.html', {})
+                if user.is_active:
+                    sys_login(request, user)
+                    return render(request, 'index.html', {})
+                else:
+                    return render(request, 'login.html', {'msg': '用户未激活'})
             else:
                 return render(request, 'login.html', {'msg': '用户名或者密码错误'})
         else:
@@ -60,6 +62,7 @@ class RegisterView(View):
             user_profile = UserProfile()
             user_profile.username = email
             user_profile.email = email
+            user_profile.is_active = False
             user_profile.password = make_password(password)
             user_profile.save()
 
@@ -67,4 +70,16 @@ class RegisterView(View):
             return render(request, 'login.html')
         else:
             return render(request, 'register.html', locals())
+
+class ActiveUser(View):
+
+    def get(self, request, active_code):
+        all_records = EmailVerifyRecord.objects.filter(code=active_code)
+        if all_records:
+            for record in all_records:
+                email = record.email
+                user = UserProfile.objects.get(email=email)
+                user.is_active = True
+                user.save()
+        return render(request, 'login.html')
 
