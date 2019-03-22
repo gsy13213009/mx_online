@@ -29,7 +29,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 AUTHENTICATION_BACKENDS = (
     'users.views.CustomBackend',
@@ -85,7 +84,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mx_online.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
@@ -98,7 +96,6 @@ DATABASES = {
         'HOST': '127.0.0.1'
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -118,7 +115,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
@@ -131,7 +127,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = False
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
@@ -147,3 +142,6 @@ EMAIL_HOST_USER = 'gsy_work@163.com'
 EMAIL_HOST_PASSWORD = 'guosiyi111'
 EMAIL_USE_TLS = False
 EMAIL_FROM = 'gsy_work@163.com'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
